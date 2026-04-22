@@ -1,24 +1,44 @@
 #include <iostream>
 #include "Deck.h"
+#include "HumanPlayer.h"
+#include "AIPlayer.h"
 
 int main() {
-    // 1. Create a fresh 52-card deck
+    std::cout << "===========================\n";
+    std::cout << "   Teen Patti Simulator    \n";
+    std::cout << "===========================\n\n";
+
+    // --- 1. Set up the deck ---
     Deck deck;
-    std::cout << "Deck created. Cards remaining: " << deck.remaining() << "\n\n";
-
-    // 2. Shuffle the deck
     deck.shuffle();
-    std::cout << "Deck shuffled.\n\n";
+    std::cout << "Deck shuffled. Cards remaining: " << deck.remaining() << "\n\n";
 
-    // 3. Deal 3 cards (one Teen Patti hand) and print each
-    std::cout << "Dealing 3 cards:\n";
-    std::cout << "-------------------------\n";
-    for (int i = 1; i <= 3; ++i) {
-        Card c = deck.deal();
-        std::cout << "  Card " << i << ": " << c.toString() << "\n";
+    // --- 2. Create players ---
+    // Player* allows polymorphism — we can call takeTurn() on both
+    // without knowing at compile time whether it's Human or AI
+    Player* human = new HumanPlayer("Ali");
+    Player* ai    = new AIPlayer("Bot-1");
+
+    // --- 3. Deal 3 cards each (standard Teen Patti hand) ---
+    std::cout << "Dealing cards...\n";
+    for (int i = 0; i < 3; ++i) {
+        human->addCard(deck.deal());
+        ai->addCard(deck.deal());
     }
-    std::cout << "-------------------------\n";
-    std::cout << "\nCards remaining in deck: " << deck.remaining() << "\n";
+    std::cout << "Cards remaining in deck: " << deck.remaining() << "\n";
+
+    // --- 4. Take turns (polymorphic dispatch) ---
+    // The correct takeTurn() is called automatically based on the real object type
+    human->takeTurn();
+    ai->takeTurn();
+
+    // --- 5. Clean up heap memory ---
+    delete human;
+    delete ai;
+
+    std::cout << "\n===========================\n";
+    std::cout << "     End of Round 1        \n";
+    std::cout << "===========================\n";
 
     return 0;
 }
