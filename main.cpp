@@ -1,43 +1,70 @@
 #include <iostream>
-#include "Deck.h"
+#include "GameEngine.h"
 #include "HumanPlayer.h"
 #include "AIPlayer.h"
 
 int main() {
     std::cout << "===========================\n";
-    std::cout << "   Teen Patti Simulator    \n";
+    std::cout << "   TEEN PATTI SIMULATOR    \n";
     std::cout << "===========================\n\n";
 
-    // --- 1. Set up the deck ---
-    Deck deck;
-    deck.shuffle();
-    std::cout << "Deck shuffled. Cards remaining: " << deck.remaining() << "\n\n";
+    // -------------------------
+    // 1. CREATE GAME ENGINE
+    // -------------------------
+    GameEngine game;
 
-    // --- 2. Create players ---
-    // Player* allows polymorphism — we can call takeTurn() on both
-    // without knowing at compile time whether it's Human or AI
+    // -------------------------
+    // 2. CREATE PLAYERS
+    // -------------------------
     Player* human = new HumanPlayer("Ali");
     Player* ai    = new AIPlayer("Bot-1");
 
-    // --- 3. Deal 3 cards each (standard Teen Patti hand) ---
-    std::cout << "Dealing cards...\n";
-    for (int i = 0; i < 3; ++i) {
-        human->addCard(deck.deal());
-        ai->addCard(deck.deal());
-    }
-    std::cout << "Cards remaining in deck: " << deck.remaining() << "\n";
+    game.addPlayer(human);
+    game.addPlayer(ai);
 
-    // --- 4. Take turns (polymorphic dispatch) ---
-    // The correct takeTurn() is called automatically based on the real object type
-    human->takeTurn();
-    ai->takeTurn();
+    // -------------------------
+    // 3. START ROUND
+    // -------------------------
+    game.startRound();
 
-    // --- 5. Clean up heap memory ---
+    // -------------------------
+    // 4. DEAL CARDS
+    // -------------------------
+    game.dealCards();
+
+    std::cout << "\n===== PLAYER HANDS =====\n";
+    human->printHand();
+    ai->printHand();
+
+    // -------------------------
+    // 5. PLAY TURNS
+    // -------------------------
+    game.playTurns();
+
+    // -------------------------
+    // 6. DETERMINE WINNER
+    // (uses HandEvaluator inside GameEngine)
+    // -------------------------
+    Player* winner = game.determineWinner();
+
+    // -------------------------
+    // 7. AWARD WINNER
+    // -------------------------
+    game.awardWinner(winner);
+
+    // -------------------------
+    // 8. RESET ROUND
+    // -------------------------
+    game.resetRound();
+
+    // -------------------------
+    // 9. CLEANUP MEMORY
+    // -------------------------
     delete human;
     delete ai;
 
     std::cout << "\n===========================\n";
-    std::cout << "     End of Round 1        \n";
+    std::cout << "       GAME OVER           \n";
     std::cout << "===========================\n";
 
     return 0;
