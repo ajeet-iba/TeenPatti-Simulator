@@ -43,12 +43,21 @@ Winner is decided based on the strongest hand.
 
 Project Structure:
 TeenPatti/
+
 │
+
 ├── Card.h / Card.cpp
+
 ├── Deck.h / Deck.cpp
+
 ├── Player.h / Player.cpp
+
 ├── HumanPlayer.h / HumanPlayer.cpp
+
 ├── AIPlayer.h / AIPlayer.cpp
+
 ├── GameEngine.h / GameEngine.cpp
+
 ├── HandEvaluator.h / HandEvaluator.cpp
+
 ├── main.cpp
