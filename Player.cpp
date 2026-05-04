@@ -1,5 +1,6 @@
 #include "Player.h"
 #include <iostream>
+using namespace std;
 
 Player::Player(string n, int b)
     : name(n), balance(b), isFolded(false), isSeen(false) {}
@@ -19,42 +20,35 @@ void Player::clearHand() {
 }
 
 void Player::printHand() const {
-    cout << "\n" << name << "'s Hand:\n";
-    cout << "-------------------\n";
-
-    for (int i = 0; i < hand.size(); i++) {
-        cout << "[" << i + 1 << "] "
-             << hand[i].toString() << endl;
+    std::cout << "\n" << name << "'s Hand:\n";
+    std::cout << "-------------------\n";
+    for (int i = 0; i < (int)hand.size(); i++) {
+        std::cout << "[" << i + 1 << "] "
+                  << hand[i].toString() << "\n";
     }
-
-    cout << "-------------------\n";
-}
-
-vector<Card> Player::getHand() const {
-    return hand;
+    std::cout << "-------------------\n";
 }
 
 void Player::fold() {
     isFolded = true;
-    cout << name << " folded.\n";
+    std::cout << name << " folded.\n";
 }
 
 void Player::bet(int amount) {
     if (amount <= balance) {
         balance -= amount;
-        cout << name << " bets $" << amount << endl;
-    }
-    else {
-        cout << name << " doesn't have enough chips.\n";
+        std::cout << name << " bets $" << amount << "\n";
+    } else {
+        std::cout << name << " doesn't have enough chips.\n";
     }
 }
 
 void Player::seeCards() {
     isSeen = true;
-    cout << name << " has seen their cards.\n";
+    std::cout << name << " has seen their cards.\n";
 }
 
-string Player::getName() const {
+std::string Player::getName() const {
     return name;
 }
 
@@ -76,12 +70,10 @@ void Player::addBalance(int amount) {
 
 int Player::getHighestCard() const {
     int highest = 0;
-
     for (const Card& c : hand) {
         if (c.getRank() > highest) {
             highest = c.getRank();
         }
     }
-
     return highest;
 }
