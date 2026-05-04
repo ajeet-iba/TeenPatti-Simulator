@@ -1,49 +1,37 @@
 #pragma once
-#include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 #include "Card.h"
-
-using namespace std;
 
 class Player {
 protected:
-    string name;
+    std::string name;
     int balance;
-    vector<Card> hand;
+    std::vector<Card> hand;
     bool isFolded;
-    bool isSeen;
 
 public:
     // Constructor
-    Player(string n, int b = 1000);
+    Player(std::string name, int balance = 1000);
 
     // Virtual destructor
-    virtual ~Player();
+    virtual ~Player() = default;
 
-    // Pure virtual function
-    virtual void takeTurn() = 0;
-
-    // Card functions
-    void addCard(const Card& c);
-    void clearHand();
+    // --- Card / Hand Management ---
+    void addCard(Card c);
     void printHand() const;
-    vector<Card> getHand() const;
 
-    // Game actions
+    // --- Game Actions ---
     void fold();
-    void bet(int amount);
-    void seeCards();
 
-    // Getters
-    string getName() const;
+    // --- Getters ---
+    std::string getName() const;
     int getBalance() const;
     bool getIsFolded() const;
-    bool getIsSeen() const;
 
-    // Money
-    void addBalance(int amount);
+    // --- Returns reference to hand (fixed) ---
+    std::vector<Card>& getHand() { return hand; }
 
-    // Hand helper
-    int getHighestCard() const;
+    // --- Pure Virtual Function ---
+    virtual void takeTurn() = 0;
 };
