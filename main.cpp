@@ -6,7 +6,6 @@
 #include "CardSprite.h"
 
 int main() {
-    // Made window taller: 800x700
     sf::RenderWindow window(
         sf::VideoMode({800, 700}),
         "Teen Patti Simulator"
@@ -28,6 +27,13 @@ int main() {
         human.addCard(deck.deal());
         ai.addCard(deck.deal());
     }
+
+    // --- Game State ---
+    int pot = 0;
+    bool playerActed = false;   // Has human taken their turn?
+    bool aiActed = false;       // Has AI taken its turn?
+    bool humanFolded = false;
+    std::string statusMessage = "Your turn! Bet or Fold.";
 
     // --- Background ---
     sf::RectangleShape background({800.f, 700.f});
@@ -55,9 +61,9 @@ int main() {
     p1Name.setStyle(sf::Text::Bold);
     p1Name.setPosition({360.f, 555.f});
 
-    sf::Text p1Balance(font, "Balance: $1000", 16);
+    sf::Text p1Balance(font, "Balance: $" + std::to_string(human.getBalance()), 16);
     p1Balance.setFillColor(sf::Color(255, 215, 0));
-    p1Balance.setPosition({315.f, 578.f});
+    p1Balance.setPosition({300.f, 578.f});
 
     // --- Player 2 (AI - Top) ---
     sf::Text p2Name(font, "Bot-1", 20);
@@ -65,9 +71,9 @@ int main() {
     p2Name.setStyle(sf::Text::Bold);
     p2Name.setPosition({360.f, 45.f});
 
-    sf::Text p2Balance(font, "Balance: $1000", 16);
+    sf::Text p2Balance(font, "Balance: $" + std::to_string(ai.getBalance()), 16);
     p2Balance.setFillColor(sf::Color(255, 215, 0));
-    p2Balance.setPosition({315.f, 68.f});
+    p2Balance.setPosition({310.f, 68.f});
 
     // --- Pot ---
     sf::RectangleShape potBox({160.f, 40.f});
@@ -80,12 +86,15 @@ int main() {
     potText.setFillColor(sf::Color(255, 215, 0));
     potText.setPosition({340.f, 336.f});
 
+    // --- Status Message (center of table) ---
+    sf::Text statusText(font, statusMessage, 16);
+    statusText.setFillColor(sf::Color::White);
+    statusText.setPosition({250.f, 390.f});
+
     // --- Human Cards (Bottom) ---
     std::vector<Card>& humanHand = human.getHand();
     CardSprite humanCards[3] = {
-        CardSprite(font),
-        CardSprite(font),
-        CardSprite(font)
+        CardSprite(font), CardSprite(font), CardSprite(font)
     };
     for (int i = 0; i < 3; ++i) {
         humanCards[i].setCard(humanHand[i]);
@@ -95,9 +104,7 @@ int main() {
 
     // --- AI Cards (Top) - Face Down ---
     CardSprite aiCards[3] = {
-        CardSprite(font),
-        CardSprite(font),
-        CardSprite(font)
+        CardSprite(font), CardSprite(font), CardSprite(font)
     };
     for (int i = 0; i < 3; ++i) {
         aiCards[i].setPosition(270.f + i * 80.f, 110.f);
@@ -128,10 +135,6 @@ int main() {
     foldText.setStyle(sf::Text::Bold);
     foldText.setPosition({562.f, 640.f});
 
-    // --- Game State ---
-    int pot = 0;
-    bool playerFolded = false;
-
     // --- Main Loop ---
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -139,25 +142,60 @@ int main() {
                 window.close();
             }
 
-            if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
-                sf::Vector2f mouse(
-                    static_cast<float>(click->position.x),
-                    static_cast<float>(click->position.y)
-                );
+            // Only listen for clicks if human hasn't acted yet
+            if (!playerActed) {
+                if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
+                    sf::Vector2f mouse(
+                        static_cast<float>(click->position.x),
+                        static_cast<float>(click->position.y)
+                    );
 
-                // BET clicked
-                if (!playerFolded && betButton.getGlobalBounds().contains(mouse)) {
-                    pot += 100;
-                    potText.setString("POT: $" + std::to_string(pot));
-                    betButton.setFillColor(sf::Color(0, 200, 0));
-                }
+                    // --- BET clicked ---
+                    if (betButton.getGlobalBounds().contains(mouse)) {
+                        // Deduct from human balance
+                        human.bet(100);
+                        pot += 100;
 
-                // FOLD clicked
-                if (!playerFolded && foldButton.getGlobalBounds().contains(mouse)) {
-                    playerFolded = true;
-                    foldText.setString("FOLDED");
-                    foldButton.setFillColor(sf::Color(100, 0, 0));
-                    p1Name.setFillColor(sf::Color(150, 150, 150));
+                        // Update displays
+                        potText.setString("POT: $" + std::to_string(pot));
+                        p1Balance.setString("Balance: $" + std::to_string(human.getBalance()));
+
+                        // Disable buttons visually
+                        betButton.setFillColor(sf::Color(0, 80, 0));
+                        foldButton.setFillColor(sf::Color(80, 0, 0));
+                        playerActed = true;
+
+                        // AI responds — always bets
+                        ai.bet(100);
+                        pot += 100;
+                        potText.setString("POT: $" + std::to_string(pot));
+                        p2Balance.setString("Balance: $" + std::to_string(ai.getBalance()));
+                        aiActed = true;
+
+                        statusText.setString("Bot-1 also bet $100! Waiting for showdown...");
+                    }
+
+                    // --- FOLD clicked ---
+                    if (foldButton.getGlobalBounds().contains(mouse)) {
+                        human.fold();
+                        humanFolded = true;
+                        playerActed = true;
+
+                        // Grey out human side
+                        p1Name.setFillColor(sf::Color(150, 150, 150));
+                        p1Balance.setFillColor(sf::Color(150, 150, 150));
+                        foldText.setString("FOLDED");
+
+                        // Disable buttons
+                        betButton.setFillColor(sf::Color(0, 80, 0));
+                        foldButton.setFillColor(sf::Color(80, 0, 0));
+
+                        // AI wins automatically
+                        ai.addBalance(pot);
+                        p2Balance.setString("Balance: $" + std::to_string(ai.getBalance()));
+                        statusText.setString("You folded! Bot-1 wins the pot!");
+                        aiActed = true;
+                    }
                 }
             }
         }
@@ -169,6 +207,7 @@ int main() {
         window.draw(title);
         window.draw(potBox);
         window.draw(potText);
+        window.draw(statusText);
         window.draw(p1Name);
         window.draw(p1Balance);
         window.draw(p2Name);
