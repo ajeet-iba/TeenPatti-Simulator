@@ -31,38 +31,25 @@ void Player::printHand() const {
 
 void Player::fold() {
     isFolded = true;
-    std::cout << name << " folded.\n";
+    // No cout — GUI handles display
 }
 
 void Player::bet(int amount) {
     if (amount <= balance) {
         balance -= amount;
-        std::cout << name << " bets $" << amount << "\n";
-    } else {
-        std::cout << name << " doesn't have enough chips.\n";
+        // No cout — GUI handles display
     }
 }
 
 void Player::seeCards() {
     isSeen = true;
-    std::cout << name << " has seen their cards.\n";
+    // No cout — GUI handles display
 }
 
-std::string Player::getName() const {
-    return name;
-}
-
-int Player::getBalance() const {
-    return balance;
-}
-
-bool Player::getIsFolded() const {
-    return isFolded;
-}
-
-bool Player::getIsSeen() const {
-    return isSeen;
-}
+std::string Player::getName() const { return name; }
+int Player::getBalance() const      { return balance; }
+bool Player::getIsFolded() const    { return isFolded; }
+bool Player::getIsSeen() const      { return isSeen; }
 
 void Player::addBalance(int amount) {
     balance += amount;
@@ -71,9 +58,8 @@ void Player::addBalance(int amount) {
 int Player::getHighestCard() const {
     int highest = 0;
     for (const Card& c : hand) {
-        if (c.getRank() > highest) {
+        if (c.getRank() > highest)
             highest = c.getRank();
-        }
     }
     return highest;
 }
