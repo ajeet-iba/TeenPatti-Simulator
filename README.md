@@ -20,7 +20,7 @@ A graphical Teen Patti (3-Card Poker) game built in C++ using SFML, developed as
 
 ### Compile
 ```bash
-g++ -std=c++17 main.cpp Card.cpp Deck.cpp Player.cpp HumanPlayer.cpp AIPlayer.cpp GameEngine.cpp HandEvaluator.cpp CardSprite.cpp -o teen_patti.exe -I"C:/msys64/ucrt64/include" -L"C:/msys64/ucrt64/lib" -lsfml-graphics -lsfml-window -lsfml-system
+g++ -std=c++17 src/main.cpp src/Card.cpp src/Deck.cpp src/Player.cpp src/HumanPlayer.cpp src/AIPlayer.cpp src/GameEngine.cpp src/HandEvaluator.cpp src/CardSprite.cpp -o teen_patti.exe -I"./include" -I"C:/msys64/ucrt64/include" -L"C:/msys64/ucrt64/lib" -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 ### Run
