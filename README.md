@@ -23,10 +23,15 @@ The project demonstrates strong OOP principles along with game logic, AI behavio
 
 Game Logic:
 
+
 • Each player places an initial bet.
+
 • Each player is dealt 3 cards face down.
+
 • Players take turns betting or folding.
+
 • The round continues until only one player remains or a showdown occurs.
+
 • The player with the highest-ranking hand wins the pot.
 
 Hand ranking (highest to lowest):
