@@ -21,9 +21,13 @@ The project demonstrates strong OOP principles along with game logic, AI behavio
 
 📦 Clean Object-Oriented Design (OOP)
 
-Game Rules:
+Game Logic:
 
-Each player is dealt 3 cards.
+• Each player places an initial bet.
+• Each player is dealt 3 cards face down.
+• Players take turns betting or folding.
+• The round continues until only one player remains or a showdown occurs.
+• The player with the highest-ranking hand wins the pot.
 
 Hand ranking (highest to lowest):
 
@@ -41,23 +45,4 @@ Hand ranking (highest to lowest):
 
 Winner is decided based on the strongest hand.
 
-Project Structure:
-TeenPatti/
 
-│
-
-├── Card.h / Card.cpp
-
-├── Deck.h / Deck.cpp
-
-├── Player.h / Player.cpp
-
-├── HumanPlayer.h / HumanPlayer.cpp
-
-├── AIPlayer.h / AIPlayer.cpp
-
-├── GameEngine.h / GameEngine.cpp
-
-├── HandEvaluator.h / HandEvaluator.cpp
-
-├── main.cpp
