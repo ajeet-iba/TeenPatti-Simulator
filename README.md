@@ -34,20 +34,5 @@ Game Logic:
 
 • The player with the highest-ranking hand wins the pot.
 
-Hand ranking (highest to lowest):
-
-🔥 Trail (Three of a kind)
-
-🌟 Pure Sequence (Same suit consecutive)
-
-🔢 Sequence (Consecutive cards)
-
-🎨 Color (Same suit)
-
-👥 Pair (Two cards same rank)
-
-🧾 High Card
-
-Winner is decided based on the strongest hand.
 
 
